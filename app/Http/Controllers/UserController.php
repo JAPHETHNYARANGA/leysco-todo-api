@@ -38,19 +38,40 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        try{
+        try {
+            $request->validate([
+                'email' => 'required',
+                'password' => 'required'
+            ]);
+
+            $email = $request['email'];
+            $user = User::where('email', $email)->firstOrFail();
+
             $credentials = $request->only('email', 'password');
 
-            if (Auth::attempt($credentials)) {
-                $user = Auth::user();
-                return response()->json($user, Response::HTTP_OK);
-            }
-    
-            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
 
-        }catch (\Throwable $th) {
+            if (Auth::attempt($credentials)) {
+
+                if ($user) {
+                    $token = $user->createToken('UserAuthentication')->plainTextToken;
+                    return response([
+                        'success' => true,
+                        'message' => 'User logged in successfully',
+                        'token' => $token,
+                        'user' => $user
+                    ],Response::HTTP_OK);
+                } else {
+                    Auth::logout(); 
+                    return response([
+                        'success' => false,
+                        'message' => 'Please verify your email before logging in.'
+                    ], 401);
+                }
+            }
+        } catch (\Throwable $th) {
             return response()->json([
-                'message' => $th->getMessage(),
+                'status' => false,
+                'message' => $th->getMessage()
             ], 500);
         }
     }
