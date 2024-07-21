@@ -32,7 +32,7 @@ class TaskController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'status' => 'required|in:pending,in-progress,completed',
-                'assigned_user' => 'nullable|exists:users,id',
+                'assigned_user' => 'nullable',
             ]);
     
             $task = Task::create([

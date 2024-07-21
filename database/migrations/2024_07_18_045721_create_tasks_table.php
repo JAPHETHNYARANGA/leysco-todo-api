@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('status');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('assigned_user')->nullable();
+            $table->string('assigned_user')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
