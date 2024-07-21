@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+    public function fetchAllUsers(){
+        try{
+
+            $users = User::all();
+
+            return response([
+                'user' => $users
+            ],Response::HTTP_OK);
+
+
+        }catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+
+    }
     public function store(Request $request)
     {
         try {

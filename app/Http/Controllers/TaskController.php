@@ -117,5 +117,51 @@ class TaskController extends Controller
             ], 500);
         }
     }
+
+    public function startTask($id)
+    {
+        try {
+            $task = Task::findOrFail($id);
+
+            // Check if task status is 'pending' to move to 'in-progress'
+            if ($task->status === 'pending') {
+                $task->status = 'in-progress';
+                $task->save();
+
+                return response()->json($task, Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Task cannot be started.'], Response::HTTP_BAD_REQUEST);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function completeTask($id)
+    {
+        try {
+            $task = Task::findOrFail($id);
+
+            // Check if task status is 'in-progress' to move to 'completed'
+            if ($task->status === 'in-progress') {
+                $task->status = 'completed';
+                $task->save();
+
+                return response()->json($task, Response::HTTP_OK);
+            }
+
+            return response()->json(['message' => 'Task cannot be completed.'], Response::HTTP_BAD_REQUEST);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
    
 }
